@@ -1,0 +1,15 @@
+##Ejercicio 1
+vectorz<-11:30
+dim(vectorz)<-c(5,4)
+View(vectorz)
+rownames(vectorz)<-c("escuela1","escuela2","escuela3","escuela4","escuela5")
+colnames(vectorz)<-c("toluca","pachuca","gdl","mty")
+View(vectorz)
+vectorz[3,1]
+vectorz[5,3]
+vectorz[1,2]
+
+##Ejercicio 2
+mat1<-matrix(0:17,nrow=6,ncol=3)
+View(mat1)
+mat1[3,3]
