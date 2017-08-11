@@ -1,0 +1,77 @@
+### Para pegar un renglon a mi matriz 
+vectorz<-11:30
+dim(vectorz)<-c(5,4)
+View(vectorz)
+rownames(vectorz)<-c("escuela1","escuela2","escuela3","escuela4","escuela5")
+colnames(vectorz)<-c("toluca","pachuca","gdl","mty")
+View(vectorz)
+vectorz[3,1]
+vectorz[5,3]
+vectorz[1,2]
+
+##Para pegar un renglon a la matriz ocupamos el rbind
+
+vectorz<-rbind(vectorz,c(4,5,6,7)) ##los numeros concatenados son los que se pegan en el
+#renglon, es decir deberia coincidir con el numero de columnas
+View(vectorz)
+rownames(vectorz)<-c("escuela1","escuela2","escuela3","escuela4","escuela5","escuela6")
+#para pegar una columna cbind
+vectorz<-cbind((vectorz),c(14,25,30,7,99,50))
+colnames(vectorz)<-c("toluca","pachuca","gdl","mty","joco")
+View(vectorz)
+#editar la matriz en un dato espcifico
+vectorz["escuela1","joco"]<-18 #cambia el dato en el renglon escuela1, joco, en este caso
+#lo cambia por 18
+edit(vectorz) #podemos editar la matriz de una forma mas visual
+#para multiplicar matrices se utiliza * o %
+#para la transpuesta de una matriz se usa: t()
+
+##
+nombres<-c("sergio","rodo","juan","jessica")
+edad<-c(30,43,21,18)
+altura<-c(170,165,175,172)
+salario<-c(3000,4500,2200,4300)
+basex<-data.frame (nombres,edad,altura,salario) #edad,altura y salario son las columnas
+#deben contener el mismo numero de datos 
+View(basex)
+basex[4,3]<-178 #es lo mismo para cambiar un valor de la base de datos
+basex$salario*2.2->basex$salario
+#de esta forma seleccionamos la variable salario y nuktiplicamos todos sus elementos por 2.2
+peso<-c(83.2,75.2,69.3,70.5)
+#para asignar la variable peso volvemos a crear el data frame, los cambios realizados
+#parece que se deshacen
+basex<-data.frame (nombres,edad,altura,salario,peso)
+View(basex)
+basex$salario*2.2->basex$salario
+basex$peso*1.2->basex$peso
+View(basex)
+#para redondear
+round(basex$peso,3)
+#otra forma de agregar columnas al data frame
+basex$escol<-c("prepa","lic","ninguno","prim")
+View(basex)
+basex$sexo<-c(1,1,1,2)
+#table con sexo, te da una tabla de frecuencias, cuantos datos hay de cada variable
+table(basex$sexo)
+attach(basex)
+##con la funcion attach es para que todo lo que se llame mandar va ser de la basex
+detach(basex)
+#con esta es para quitar la funcion attach
+
+###paqueterias
+#para poder installar paqueterias:
+#   install.packages("foreign")     ##foreign es una paqueteria
+#r no abre automaticamente las paqueterias si queremos usarlas, necesitas llamarlas:
+# library(foreign)
+
+#la paqueteria foreign sirve para importar o exportar base de datos
+#questionr es para expandir frecuencias de bases de datos muestrales
+#car es para regresion, otra forma de llamar las paqueterias
+# require(car)
+
+install.packages("foreign")
+install.packages("questionr")
+install.packages("car")
+library(foreign)
+library(questionr)
+library(car)
