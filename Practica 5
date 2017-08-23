@@ -1,0 +1,41 @@
+temporal<-tempfile()
+
+install.packages("foreign") ##instalacion de la libreria foreign
+require(foreign) ##solicutamos la librerua
+ruta<-read.dbf("C:/Users/DELL/Downloads/ruta.dbf") ##llammos una base de datos desde
+#nuestros archivos, en este caso dbf es el tipo de archivo
+View(ruta)
+table(ruta$SEXO) #tabla de frecuencias sobre la variable sexo en la base de datos
+install.packages("questionr")
+require(questionr)
+ls(ruta)
+wtd.table(ruta$SEXO, weights = ruta$CAMION)
+wtd.table(ruta$SEXO, weights = ruta$MICROBUS)
+wtd.table(ruta$SEXO, weights = ruta$AUTOMOVIL)
+##Al parecer filtra la variable sexo en un tabla de frecuencia, y despues vuelve a
+# filtrar, esta vez para las variables camion, microbus y automovil, nos indica que 
+# tantas personas de determinado sexo usan dichos transportes. Datos expandidos
+sum(ruta$SEXO) ##suma todos los datos de una columna, en este caso, no nos diria cuantos
+#encuestados totales hubo ya que hay que considerar para casa sexo se declaro un numero
+sum(ruta$MINUTOS)
+table(ruta$HORA)
+table(ruta$ANIO)
+table(ruta$EDAD)
+table(ruta$EDO)
+wtd.table(ruta$EDO, weights = ruta$CAMION) ## de cada estado cuantos usan camion
+table(ruta$CAMION) #en esta tabla hay personas que toma 0,1,2,3 u 8 camiones
+sum(wtd.table(ruta$EDO, weights = ruta$CAMION)) #nos da la suma de la tabla expandida 
+wtd.table(ruta$SEXO, ruta$EDO, weights= ruta$CAMION)
+## nos da una tabla cruzada como filas tenemos el sexo, las edades son las columnas
+# y las los datos son las personas de determinado sexo y edad que toman un camion
+edo15<-subset(ruta,ruta$EDO==15)
+View(edo15)
+## subset sirve para ver datos especificos, en este caso creamos una nueva tabla,
+#unicamente con los datos del estado 15
+edo15muj<-subset(ruta,ruta$EDO==15 & ruta$SEXO==2)
+View(edo15muj)
+## se puede decir que este comando es una interseccion(en este caso se filtran
+# las mujeres del estado 15)
+edo15c25<-subset(ruta, ruta$EDO==15|ruta$EDO==25)
+View(edo15c25)
+## esto | es como un o en algebra es decir filtra los datos del estado 15 o del 25(ambos)
