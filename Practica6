@@ -1,0 +1,40 @@
+temporal<-tempfile()
+download.file("http://www.beta.inegi.org.mx/contenidos/proyectos/enchogares/modulos/mti/2015/microdatos/mti2015_bases_conapo_dbf.zip", temporal)
+files<-unzip(temporal,list=TRUE)$Name
+#primero se descargaron los archivos, sin embargo nos marcaba error al estar comprimidos
+# por eso se descomprimen con unzip
+unzip(temporal,files=files[grepl("dbf",files)])
+require(foreign)
+files
+mti<- data.frame(read.dbf("mti2015_05_17_sdem_precodificado.DBF"))
+## todo lo anterior es para descargar la base de datos, aqui la mandamos leer
+# y ademas la convertimos en un data frame
+View(mti)
+
+### Etiquetar variables 
+table(mti$CS_P15) #tabla de frecuencias
+mti$CS_P15<-factor(mti$CS_P15,levels= c(1,2,3,4),labels=c("primaria","secundaria","preparatoria","no sabe"))
+## ponemos nombres a los datos de una variable, puedes dejar el mismo nombre o cambiarlo
+## en el caso de rama lo cambiamos por RAMA1 y RAMA quedo igual
+mti$RAMA1<-factor(mti$RAMA, levels= c(1,2,3,4,5,6,7), 
+    labels=c("agropecuario","construccion","industria","comercio","servicios","otros","no especificado"))
+
+table(mti$RAMA)
+table(mti$RAMA1)
+
+mti$RAMAN<-as.numeric(mti$RAMA) ##CONVERTIMOS a numerico
+
+###RECODIFICAR VARIABLE
+
+mti$RAMA2[mti$RAMAN==1]<-1
+mti$RAMA2[mti$RAMAN==2]<-2
+mti$RAMA2[mti$RAMAN==3]<-2
+mti$RAMA2[mti$RAMAN==4]<-3
+mti$RAMA2[mti$RAMAN==5]<-3
+mti$RAMA2[mti$RAMAN==6]<-4
+mti$RAMA2[mti$RAMAN==7]<-4
+## En lugar de tener las variables, datos, 1,2,3,4,5,6,7 lo que hacemos en este caso
+#es sustituir la variable RAMAN por RAMA2, si observamos en caso de que nuestros datos
+#fuese 2 o 3, en lugar de ellos obtendremos un 2, en caso de ser 4 o 5 obtendremos un 3
+#y en caso de ser 6 o 7 un 4, los datos van a dar a una variable en lugar de 2 en este caso
+table(mti$RAMA2)
