@@ -1,0 +1,6 @@
+datosx<-sample(1:4,10,replace=TRUE)
+View(datosx)
+datosy<-sample(75:95,10,replace=TRUE)
+View(datosy)
+plot(datosx,datosy)
+lines(lowess(datosy~datosx))
