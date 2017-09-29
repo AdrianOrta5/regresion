@@ -1,0 +1,39 @@
+##ejercicio: se busca la relacion de la estatura con el salto horizontal
+
+x<-c(170,172,173,174,174,175,176,177,180,180,180,180,180,181,181,182,182,182,182,184,184,185,186,188)
+
+y<-c(.84,1.31,1.42,1.03,1.07,1.08,1.04,1.8,1.45,1.60,1.61,2.13,2.15,.84,1.43,.90,1.81,1.94,
+     2.68,1.49,2.52,3.00,1.87,3.08)
+
+##1) determine la ecaucion de la recta de regresion estimada
+#2)calcule una estimacion puntual del salto horizontal promedio cuando la estatura de las personas es de 182
+#3)calcule los valores de los residuos(error) de min cuadrado de las 4 observaciones con las cuales la estatura es de 182
+#4¿que proporcion de la variacion observada en el salto horizontal es atribuida a la relacion de la regresion linela simple
+#1
+sumax<-sum(x)
+sumay<-sum(y)
+producto<-(x*y)
+sumapro<-sum(producto)
+Sxy<-sumapro-(sumax*sumay)/24
+sumax2<-sum(x*x)
+Sxx<-sumax2-(sumax*sumax)/24
+b1<-Sxy/Sxx
+bo<-(sumay-b1*sumax)/24
+##ecuacion de la recta
+ecuacion<-bo+b1*x
+##funcion lm
+mdo1<-lm(y~x)
+summary(mdo1)
+#2
+y1<-bo+b1*(182)
+#3calcule los residuios(error) positivos. arriba de la recta, negativos por debajo de la recta
+v1<-.90-y1
+v2<-1.81-y1
+v3<-1.94-y1
+v4<-2.68-y1
+#sacar los valores del analisis(lm)
+names(mdo1)
+##4 ver r cuadrada del summary, es el 45%, normalmente se acepta con el 60%
+
+plot(y~x,xlab="estatura",ylab="salto",xlim=c(160,190),ylim=c(.80,3.2),main="Diagrama de dispersion")
+abline(mdo1,col="red")
