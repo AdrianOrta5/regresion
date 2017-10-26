@@ -1,0 +1,65 @@
+###Ejercicio con modelo de regresion multiple
+#El ejercicio consiste em 3 variables sonbre el precio de unas mochilas, las variables independientes son 
+#la capacidad(tamaño) y la calidad de la mochila, la variable dependiente es el precio de la mochila
+#var1 capacidad(tamaño) cm3
+capa<-c(4330,5500,5550,4700,5200,5500,4700,5500,5800,5000)
+#var2 calidad (1-5)
+cal<-c(2,3,4,3,4,4,4,5,5,5)
+#var3 precio
+precio<-c(190,219,249,249,250,340,289,395,439,525)
+#lo primero que se hace es declarar un data frame con las 3 variables
+mochi<-data.frame(precio,capa,cal)
+#un elemento importante en el mrm es conocer las correlaciones entre las variables, em este caso para la 
+#correlacion se utiliza la funcion cor()
+cor(mochi,use="everything",method="pearson") 
+#una vez que observamos las correlaciones en la que se muestra mayor correlacion del  precio con la calidad
+#aplicamos el modelo
+modmo<-lm(precio~cal+capa) #para hacer el modelo multiple solo sumamos las variables 
+summary(modmo) #recordemos que en el mrm se utiliza la r ajustada, recordemos que con esta se interpreta que tanto
+#de la variable dependiente se explica con las variables independientes
+#la r ajustada tiene un valor de ,70 lo que implica que la recta de regresion explica en 70% la variabilidad del modelo
+#despues de que tengamos r2 ajustada aceotable se analiza el estadistico F para saber la bondad de ajuste y la calidad
+#del modelo que estamos aplicando
+anova(modmo)
+#una vez que aplicamos anova se va a revisar los valores del estadistico F y los pvalue con la finalidad de conocer
+#la bondad de ajuste del mrm, en este caso se observa que en calidad se tiene un estadistico F de 22.49, lo que es
+#un buen estadistico F debido a que se esperan valores mayores a 1, para los p-value se espera un valor menor
+# a .05 en el caso de calidad es de .00210, con esto podemos decir que la variable calidad es significativa en
+#nuestro modelo
+#para la variable capacidad tenemos un estadistico F de 1.33 y un p-value de .28, en este caso podemos concluir
+#que esta variable no resulta significativa para nuestro modelo, debio a que el estadistico apenas es mayor a 1
+# y p-value es mayor a ,05, podemos continuar con esta variable para ver si cumple con los sig supuestos
+## Lo siguiente que vamos a hacer  es realizar el diagnostico de nuestro modelo a traves de la pruebas formales
+#de shapiro, breusch pagan y durbin watson
+#para aplicar esta prueba se necesita conocer los valores ajustados, los residuos del modelo y los residuos estudentizados
+names(modmo)
+
+mochi$fitted.modmo<-fitted(modmo)    #agregamos la variable fitted.modmo, sacandolo del modelo y lo agregas al data frame son los valores ajustados
+mochi$residuals.modmo<-residuals(modmo) #sacamos los residuales y los agregamos
+mochi$rstudent.modmo<-rstudent(modmo) #residuos estudentizados
+
+###diagnostico de los supuestos 
+##supuesto 1 normalidad
+#para el supuesto de normalidad se aplica la prueba de shapiro, en r la funcion que aplica esta prueba
+#es shapiro.test
+shapiro.test(mochi$rstudent.modmo) #se espera un valor mayor a .05
+#en esta prueba esperamos un p-value mayor a .05 y en este caso se obtiene un p-value mayor a .05
+#por lo que podriamos decir que se acepta el supuesto de normalidad
+#ademas de shapiro test se debe observar graficamente esta prueba a traves de las funciones qqnorm que nos 
+#permite hacer un grafico qq
+qqnorm(mochi$rstudent.modmo)
+qqline(mochi$rstudent.modmo)
+##homocedasticidad supuesto
+install.packages("lmtest")
+library(lmtest)
+bbtest(modmo)
+### supuesto de independencia o autocorrelacion, en este caso se aplica la prueba durbin watson
+#esta prueba se evalua de 2 formas , por un lado el valor de durbin watson tiene que estar entre
+#1.5 y 2.5, ademas de este valor hay que observar el p-value que tiene que ser mayor a .05 p para que cumpla
+#con el supuesto de independencia de los residuos
+dwtest(modmo,alternative="two.sided")
+### en este caso obtenemos un durbin watson de 1.87 por lo que podemos decir que al cumplir las 3 pruebas formales
+#podriamos decir que tenemos un buen modelo y podriamos plantear la ecuacion del modelo
+coefficients(modmo)
+#plantear ecuacion
+y=b0+b1x1+b2x2
