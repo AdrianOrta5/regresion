@@ -1,0 +1,50 @@
+## Ejercicio clase: en una financiera se quiere evaluar a los corredores de bolsa de diferentes empresas, la
+#la oferta y desempeño de cada corredor se evalua en 6 areas, empeleando para cada una de las areas una escala de 0-5
+#de forma ascendente 3 de las areas evaluadas son ejecucion en la operacion, facilidad de uso y gamas de ofertas
+#en los sig, datos se presentan los las puntuaciones obtenidas
+
+corredor<-c("wall st","etrade1","etrade2","pre trade","track","water house","brown","br america","merill lynch","strong funds")
+operacion<-c(3.7,3.4,2.5,4.8,4,3,2.7,1.7,2.2,1.4)
+uso<-c(4.5,3,4,3.7,3.5,3,2.5,3.5,2.7,3.6)
+gama<-c(4.8,4.2,4,3.4,3.2,4.6,3.3,3.1,3,2.5)
+califtotal<-c(4,3.5,3.5,3.5,3.5,3.5,3,3,2.5,2)
+
+#a)determine la ecuacion de regresion estimada que se puede usar para predecir la calificacion total segun las 
+#evaluaciones obtenidas
+#b)emplee la prueba F pra determinar la significancia global de la relacion, el nivel de significancia que se requier
+#es de 95% ¿cual es su conclusion?
+#c)elimine cualquiera de las variables independientes que no sean significativas para la ec de regresion estimada
+#cual es la ec de regresion estimada que recomienda compare las r2 modelos
+
+corre<-data.frame(califtotal,operacion,uso,gama)
+cor(corre,use="everything",method="pearson") 
+modcorre<-lm(califtotal~operacion + uso + gama)
+##ecuacion del modelo y= .345+.254X1+.132X2+.458X3
+summary(modcorre)
+anova(modcorre)
+## la variable independiente que no se ajusta al modelo es uso ya que su p-value es .1138 y este no deberia 
+#rebasar el valor de .05, gama y operacion si se ajustan al modelo
+
+###quitando la variable uso del modelo, volvemos a aplicar lo mismo, se busca probar que las r2 no son tan
+#significativas en el mrm
+corre2<-data.frame(califtotal,operacion,gama)
+modelo2<-lm(califtotal~operacion + gama)
+summary(modelo2)
+##las r2 no difiere mucho en esta ocasion, sin embargo no es tan significativo para saber que tan eficiente es
+#un modelo
+anova(modelo2)
+##ambas variables cumple con las condiciones del estadistico F y los p-value
+
+## Lo siguiente que vamos a hacer  es realizar el diagnostico de nuestro modelo a traves de la pruebas formales
+#de shapiro, breusch pagan y durbin watson
+
+corre2$fitted.modelo2<-fitted(modelo2)
+corre2$residuals.modelo2<-residuals(modelo2)
+corre2$rstudent.modelo2<-rstudent(modelo2)
+
+shapiro.test(corre2$rstudent.modelo2) ##supuesto de normalidad
+## el p-value debe de ser mayor a .05, en este caso es asi, los residuos se distribuyen normalmente con media cero
+#y varianza uno
+
+qqnorm(corre2$rstudent.modelo2)
+qqline(corre2$rstudent.modelo2)
