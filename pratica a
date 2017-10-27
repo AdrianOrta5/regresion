@@ -1,0 +1,32 @@
+####Ejercicio
+#Plantear un modelo rm de minimo 4 variables independientes, realizando lo sig
+#1)analizar la anova par conocer la bonda de ajuste
+#2)a traves de los coeficientes detectar las variables independientes no significativas
+#3)analizar la r2 para conocer la variabilidad del modelo
+#4)en dado caso de que haya alguna var independiente no significativa, eliminarla y diagnosticar a traves de las 
+#pruebas para los supuestos
+
+### El modelo va enfocado con el nivel de embriaguez de una persona en base a 4 variables independientes,
+#este nivel se mide en escala del 5-10
+# var 1- estatura
+# var 2-horas que durmio antes de emborracharse (minimo 2, maximo 10)
+# var 3-cantidad de alcohol ingerida(mililitros)
+# var 4-porcentaje de alcohol en la bebida
+
+emb<-c(5,6,5,9,8,7,10,7,9,7)
+est<-c(1.75,1.78,1.80,1.69,1.60,1.62,1.61,1.77,1.70,1.81)
+des<-c(9,8,7,4,6,7,3,5,4,6)
+alc<-c(100,120,80,500,450,400,700,350,520,380)
+por<-c(20,40,30,40,35,25,45,22,15,34)
+
+base<-data.frame(emb,est,des,alc,por)
+cor(base,use="everything",method="pearson") ##correlacion
+modelo<-lm(emb~est+des+alc+por)
+summary(modelo)
+
+anova(modelo)
+
+#2) segun los coeficientes para alcohol tenemos que afecta al modelo en .0049 y el porcentaje .011, no hay una
+#gran afectacion al modelo
+#3) la r2 ajustada es de .9265, se supone que es el porcentaje en el que la variable dependiente esta explicada
+#por las independientes
