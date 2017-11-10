@@ -1,0 +1,85 @@
+##correlacion, mientras mas cercana a 1 mejor
+##AIC nos ayuda a identificar multicolinealidad
+##direction=forward, nos ayuda a evaluar hacia adelante
+
+# swiss 
+# medición estandarizada de la fecundidad e indicadores socioeconomicos para cada una de las 46 provincias Francesas hablantes
+# de Suiza alrededor de 1888
+
+require (stats)
+base <- data.frame(swiss)
+
+# Análisis exploratorio
+names (base)
+pairs(base)
+cor(base)
+
+# Propuesta Modelo de Regresión múltiple con base en el análisis exploratorio
+regresion1 <- lm(Infant.Mortality ~ Fertility, data= base)
+
+# Modelo propuesto anteriormente, independiente al de la primera propuesta
+
+nulo <- lm(Fertility ~ 1 , data= base) # se crea para saber que las variables si tienen un poco de relación con la variable dependiente
+# el 1 es una constante solamente
+summary(nulo)
+completo <- lm(Fertility ~ . , data = base)  # lm(Fertility ~ Infant.Mortality + education + examamination +.... ) 
+# el punto hace que se tomen como independientes todas las que no sean Fertility
+
+step (nulo, scope = list(lower= nulo, upper= completo), direction= "forward") # step fn que permite calcular los AIC
+# scope incorpora todo desde el modelo nulo hasta el modelo completo ( de los más simple a lo completo)
+# 
+
+
+summary(completo)
+help(step)
+     
+mod1<-lm(formula=Fertility~Education+Catholic+Infant.Mortality+Agriculture,data=base)
+summary(mod1)
+
+#con la finalidad de observar aspectos basicos como la r cuadrada ajustada que nos permite conocer la variabilidad
+#explicada del modelo
+#los errores de resiudos al satndar 7.816, la significacion de las variables todas son significativas (menor a .05)
+#el estadistico F y el p-value para ver el ajuste del modelo , la prueba de hipotesis que se aplica en el estadistico
+#F es h0:B0,B1,B2,...,BK=0
+#Ha: al menos un Bj diferente de cero 
+#Lo que se busca es rechazar la hipotesis nula por lo que el valor p-value debe ser menor a .05 y se busca 
+#un estadistico F mayor a 1, en este caso se cumple, el modelo parece ir bien
+
+###############################################################################
+###############################################################################
+
+#Una vez que elegimos modelo revisamos los siguientes indicadores del modelo
+
+#1.-R2 ajustada- Explica la variabilidad del modelo (aproximado>.60)
+#2.-Error estandar cercano 
+
+
+shapiro.test(rstudent(mod1))
+##lo que se busca en la shapiro es no rechazar la hipotesis nula por lo que el valor de p-value debe ser mayor
+#a .05, tenemos un valor de .48 por lo que no se rechaza la hipotesis nula, se parte de un supuesto de normalidad
+#em caso de no cumplir con la hipotesis se tiene que corregir la normalidad del modelo
+
+require(lmtest)
+bbtest(mod1)
+#prueba breusch pagan que permite ver autocorrelacion aqui esperamos no rechazar la hipotesis nula, es decir un 
+#p-value mayor a .05, esto nos permite saber que no hay 2 o mas variables que esten aportando lo mismo al modelo
+# este modelo si cumple el supuesto de autocorrelacion
+
+dwtest(mod1,alternative="two.sided") ##prueba independencia
+
+#La hipotesis nula es que los coeficientes son igual a cero, la alternativa es que son diferentes de cero
+#se busca rechazar la nula
+
+basi<-data.frame(Seatbelts)
+View(basi)
+names(basi)
+pairs(basi)
+cor(basi)
+null<-lm(drivers~1,data=basi) ##modelo nulo
+summary(null)
+modeloc<-lm(drivers~.,data=basi)
+summary(modeloc) ##algunos p-value en la prueba t son mayores a .05, esto nos indica que el modelo no es tan bueno
+step (null, scope = list(lower= null, upper= modeloc), direction= "forward")
+
+#el modelo que se nos propone es el que contiene las variables independientes driverskilled, front,rear, law,vankilled
+#con un AIC DE 1785.5
