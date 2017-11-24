@@ -1,0 +1,53 @@
+
+cajas<-c(10,15,10,20,25,18,12,14,16,22,24,17,13,30,24)
+distancia<-c(30,25,40,18,22,31,26,34,29,37,20,25,27,23,33)
+tiempo<-c(24,27,29,31,25,33,26,28,31,39,33,30,25,42,40)
+#tiempo: var dependiente
+bas<-data.frame(cajas,distancia,tiempo)
+mode<-lm(tiempo~.,data=bas)
+View(bas)
+nulo<-lm(tiempo~1,data=bas)
+step(nulo,scope=list(lower=nulo,upper=mode),direction="both")
+summary(mode)
+summary(mode)$coefficients
+bas$fitted.mode <- fitted(mode) 
+bas$reiduals.mode <- residuals(mode) 
+bas$rstudent.mode <- rstudent(mode)
+shapiro.test(bas$rstudent.mode)
+qqnorm(bas$rstudent.mode,main="Normal (0,1)")
+qqline(bas$rstudent.mode)
+require(lmtest)
+bptest(mode)
+dwtest(mode,alternative = "two.sided")
+###para poder corregir la normalidad, podemos hacer outlier
+install.packages("car")
+require(car)
+outlierTest(mode,cutoff=.05,n.max=5,order=T)
+influencePlot(mode,id.n=5)
+##nos dice que hay problemas en la observacion 5, se desvia mucho
+
+cmod2<-cooks.distance(mode)
+install.packages("faraway")
+require(faraway)
+halfnorm(cmod2,labs=etique,ylab="dist cook")
+
+
+###Tarea:eliminar el 5 y volver a correr las pruebas
+View(bas)
+bas1<-bas[-5,]
+View(bas1)
+
+mod<-lm(tiempo~.,data=bas1)
+nulo<-lm(tiempo~1,data=bas1)
+step(nulo,scope=list(lower=nulo,upper=mod),direction="both")
+summary(mod)
+summary(mod)$coefficients
+bas1$fitted.mod <- fitted(mod) 
+bas1$reiduals.mod <- residuals(mod) 
+bas1$rstudent.mod <- rstudent(mod)
+shapiro.test(bas1$rstudent.mod)
+qqnorm(bas1$rstudent.mod,main="Normal (0,1)")
+qqline(bas1$rstudent.mod)
+require(lmtest)
+bptest(mod)
+dwtest(mod,alternative = "two.sided")
