@@ -1,0 +1,53 @@
+#La distancia de cook te dice que tan alejado esta de la media
+#con el summary es donde podemos ver los coeficientes b1,b2 que tanto estan relacionados
+#las variables dependientes con las independientes
+#las correcciones de los supuestos no van a venir en el examen
+
+#AP:precio promedio; variable dependiente
+#CPC:consumo por cliente
+
+city<-c("am","bo","da","sh","ro","te","co","pa","ma","io","pa","mi","me","gr","ll","br","mer","kam","mat","lap")
+ap<-c(30,31,37,42,43,45,50,54,54,57,58,58,60,73,88,89,92,97,100,102)
+cpc<-c(134,112,136,109,105,87,56,43,77,35,65,56,58,55,49,39,36,46,40,42)
+prima<-c(200,205,198,315,211,310,200,306,245,287,298,264,255,306,315,222,244,158,166,216)
+
+#Generar 3 modelos con los datos anteriores
+#para cada modelo, encunetre el valor de r2 y AIC y genere una grafica resiual
+#comente sobre la ecuacion de los 3 modelos
+
+base<-data.frame(ap,cpc,prima)
+View(base)
+mod1<-lm(ap~.,data=base)
+mod2<-lm(ap~cpc)
+mod3<-lm(ap~prima)
+
+summary(mod1)
+#En este modelo nuestra R2 ajustada tiene un valor de .6663, lo que nos dice que podria funcionar
+#ademas b0=135.62, b1=-.5931, b2=-.1288
+nulo<-lm(ap~1,data=base)
+step(nulo,scope=list(lower=nulo,upper=mod1),direction="both")
+#el AIC con mayor valor es el que contiene a las 3 variables con un valor de 107.41
+plot(mod1$residuals)
+AIC(mod1)
+##el AIC tiene un valor de 166
+
+summary(mod2)
+#nuestra r2 tiene un valor de .60333
+#nuestra ecuacion y= 102.0033-.5653cpc
+step(nulo,scope=list(lower=nulo,upper=mod2),direction="both")
+#el aic tien un valor de 110, es mejor que un modelo nulo con valor de 127.58
+plot(mod2$residuals)
+AIC(mod2)
+#tiene un valor de 168
+
+summary(mod3)
+#tenemos una r cuadrada de -.02649
+#y=81.73235-.07613
+step(nulo,scope=list(lower=nulo,upper=mod3),direction="both")
+#en este caso nuestro modelo nulo es mejor que el modelo propuesto, por lo tanto no aporta nada
+#este modelo no sirve, incluso se observa desde la r2
+AIC(mod3)
+#Tiene un valor de 183
+
+#De acuerdo a lo visto anteriormente podria decir que el mejor modelo es el que contiene
+#todas las variables ya que tiene el menor AIC y una r2
